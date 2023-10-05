@@ -78,13 +78,13 @@ scene.add(sunLight)
 /////////////////////////////////////////////////////////////////////////
 ///// LOADING GLB/GLTF MODEL FROM BLENDER
 loader.load('models/gltf/MAPY.glb', function (gltf) {
-
-    scene.add(gltf.scene)
+    scene.add(gltf.scene);
+    
 })
 
 function createAnnotations(name, x,y,z) {
     const geo = new THREE.SphereGeometry(0.1);
-    const mat = new THREE.MeshBasicMaterial({color: 0xFF0000});
+    const mat = new THREE.MeshBasicMaterial({color: 0xFFFFFF});
     const mesh = new THREE.Mesh(geo, mat);
     mesh.position.set(x,y,z);
     mesh.name = name;
@@ -98,16 +98,18 @@ group.add(btn1);
 scene.add(group);
 
 const p = document.createElement('p');
-p.className = 'tooltip';
+p.className = 'tooltip show';
+p.textContent = 'Linnea Model'
 const pContainer = document.createElement('div');
 pContainer.appendChild(p);
 const cPointLabel = new CSS2DObject(pContainer);
+cPointLabel.position.set(-41, 6, -13.5);
 scene.add(cPointLabel);
 
 const mousePos = new THREE.Vector2();
 const raycaster = new THREE.Raycaster();
 
-window.addEventListener('mousemove', function(e) {
+window.addEventListener('click', function(e) {
     mousePos.x = (e.clientX / this.window.innerWidth) * 2 - 1;
     mousePos.y = -(e.clientY / this.window.innerHeight) * 2 + 1;
 
@@ -116,9 +118,8 @@ window.addEventListener('mousemove', function(e) {
     if(intersects.length > 0) {
         switch(intersects[0].object.name) {
             case 'Annotation1':
-                p.className = 'tooltip show';
-                cPointLabel.position.set(-41, 6, -13.5);
-                p.textContent = 'Linnea Model'
+                console.log('hey')
+                gotoLinnea();
                 break;
 
             default:
@@ -128,18 +129,18 @@ window.addEventListener('mousemove', function(e) {
 
 });
 
-// const tooltip = document.getElementsByClassName('tooltip');
-// tooltip.addEventListener('click', () => {
-//     console.log('clicked');
-// })
-
-// const earthDiv = document.createElement('div');
-// earthDiv.className = 'label';
-// earthDiv.textContent = 'Earth';
-
-// const earthLabel = new CSS2DObject(earthDiv);
-// scene.add(earthLabel);
-// earthLabel.position.set(-46, 5, -16);
+function gotoLinnea() {
+    new TWEEN.Tween(camera.position).to({
+        x: -46,
+        y: 6,
+        z: -18
+    }, 1800)
+    .delay(100).easing(TWEEN.Easing.Quartic.InOut).start()
+    .onComplete(function () {
+        controls.enabled = true
+        TWEEN.remove(this)
+    })
+}
 
 /////////////////////////////////////////////////////////////////////////
 //// INTRO CAMERA ANIMATION USING TWEEN
