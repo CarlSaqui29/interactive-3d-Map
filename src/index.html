@@ -27,8 +27,53 @@
         <link rel="manifest" href="../static/favicon/site.webmanifest">
         <meta name="msapplication-TileColor" content="#ffffff">
         <meta name="theme-color" content="#ffffff">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;600&display=swap" rel="stylesheet">
+        <style>
+            .loader {
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                width: 100%;
+                height: 100%;
+                background-color: #1E8449;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                z-index: 99;
+            }
+            .border {
+                background-color: #fff;
+                padding: 10px;
+                border-radius: 10px;
+                margin-bottom: 30px;
+            }
+            .border img {
+                width: 100%;
+                height: 120px;
+            }
+            .loader-loading img {
+                width: 100%;
+                height: 30px;
+            }
+            h1,h2,h3,h4,h5,h6,p,a {
+                font-family: 'Inter', sans-serif;
+                color: #fff;
+            }
+        </style>
     </head>
     <body>
-
+        <div class="loader">
+            <div class="border">
+                <img src="../static/images/logo.png" alt="logo">
+            </div><br>
+            <div class="loader-loading">
+                <img src="../static/images/loader.gif" alt="">
+            </div>
+            <p>3d Model is loading...</p>
+        </div>
     </body>
 </html>
