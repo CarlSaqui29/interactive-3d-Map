@@ -16,6 +16,12 @@ lodingManager.onLoad = function() {
     preloadingPage.style.display = 'none';
 }
 
+// modals
+// const linnea_modal = document.getElementById('linnea_modal');
+var linnea_modal = new bootstrap.Modal(document.getElementById('linnea_modal'), {
+    keyboard: false
+  })
+
 /////////////////////////////////////////////////////////////////////////
 //// DRACO LOADER TO LOAD DRACO COMPRESSED MODELS FROM BLENDER
 const dracoLoader = new DRACOLoader()
@@ -108,9 +114,11 @@ p.className = 'tooltip show';
 p.textContent = 'Linnea Model'
 const pContainer = document.createElement('div');
 pContainer.appendChild(p);
-pContainer.style.zIndex = 100;
-pContainer.style.position = 'absolute';
-pContainer.addEventListener('pointerdown', () => { alert(1) })
+pContainer.style.cursor = "pointer";
+pContainer.addEventListener('pointerdown', () => { 
+    console.log('linnea')
+    linnea_modal.toggle();
+ })
 const cPointLabel = new CSS2DObject(pContainer);
 cPointLabel.position.set(-41, 6, -13.5);
 scene.add(cPointLabel);
