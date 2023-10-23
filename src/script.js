@@ -100,9 +100,35 @@ rendeLoop();
 
 function gotoLinnea() {
     new TWEEN.Tween(camera.position).to({
-        x: -46,
+        x: -50,
         y: 6,
         z: -18
+    }, 1800)
+    .delay(100).easing(TWEEN.Easing.Quartic.InOut).start()
+    .onComplete(function () {
+        controls.enabled = true
+        TWEEN.remove(this)
+    })
+}
+
+function gotoJasmine() {
+    new TWEEN.Tween(camera.position).to({
+        x: -15,
+        y: 9,
+        z: -20
+    }, 1800)
+    .delay(100).easing(TWEEN.Easing.Quartic.InOut).start()
+    .onComplete(function () {
+        controls.enabled = true
+        TWEEN.remove(this)
+    })
+}
+
+function gotoClubhouse() {
+    new TWEEN.Tween(camera.position).to({
+        x: -43,
+        y: 6,
+        z: -22
     }, 1800)
     .delay(100).easing(TWEEN.Easing.Quartic.InOut).start()
     .onComplete(function () {
@@ -164,7 +190,7 @@ function renderButtons() {
     scene.add(jasmine_PointLabel);
     jasmine_Container.addEventListener('pointerdown', () => { 
         jasmine_modal.toggle();
-        // gotoJasmine();
+        gotoJasmine();
     })
 
     // clubhouse btn
@@ -179,7 +205,7 @@ function renderButtons() {
     scene.add(cb_PointLabel);
     cb_Container.addEventListener('pointerdown', () => { 
         club_house.toggle();
-        // gotoJasmine();
+        gotoClubhouse();
     })
 }
 
