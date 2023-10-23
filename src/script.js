@@ -9,11 +9,17 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer';
 
 
+const lodingManager = new THREE.LoadingManager();
+
+const preloadingPage = document.querySelector('.loader');
+lodingManager.onLoad = function() {
+    preloadingPage.style.display = 'none';
+}
 
 /////////////////////////////////////////////////////////////////////////
 //// DRACO LOADER TO LOAD DRACO COMPRESSED MODELS FROM BLENDER
 const dracoLoader = new DRACOLoader()
-const loader = new GLTFLoader()
+const loader = new GLTFLoader(lodingManager)
 dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/')
 dracoLoader.setDecoderConfig({ type: 'js' })
 loader.setDRACOLoader(dracoLoader)
