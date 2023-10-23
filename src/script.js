@@ -16,12 +16,16 @@ lodingManager.onLoad = function() {
     preloadingPage.style.display = 'none';
 }
 
-// modals
-// const linnea_modal = document.getElementById('linnea_modal');
+// modals instance
 var linnea_modal = new bootstrap.Modal(document.getElementById('linnea_modal'), {
     keyboard: false
-  })
-
+})
+var jasmine_modal = new bootstrap.Modal(document.getElementById('jasmine_modal'), {
+    keyboard: false
+})
+var club_house = new bootstrap.Modal(document.getElementById('club_house'), {
+    keyboard: false
+})
 /////////////////////////////////////////////////////////////////////////
 //// DRACO LOADER TO LOAD DRACO COMPRESSED MODELS FROM BLENDER
 const dracoLoader = new DRACOLoader()
@@ -108,21 +112,7 @@ const group = new THREE.Group();
 const btn1 = createAnnotations('Annotation1', -41, 5.5, -13.5);
 group.add(btn1);
 scene.add(group);
-
-const p = document.createElement('p');
-p.className = 'tooltip show';
-p.textContent = 'Linnea Model'
-const pContainer = document.createElement('div');
-pContainer.appendChild(p);
-pContainer.style.cursor = "pointer";
-pContainer.addEventListener('pointerdown', () => { 
-    console.log('linnea')
-    linnea_modal.toggle();
- })
-const cPointLabel = new CSS2DObject(pContainer);
-cPointLabel.position.set(-41, 6, -13.5);
-scene.add(cPointLabel);
-
+ 
 const mousePos = new THREE.Vector2();
 const raycaster = new THREE.Raycaster();
 
@@ -136,7 +126,7 @@ window.addEventListener('click', function(e) {
         switch(intersects[0].object.name) {
             case 'Annotation1':
                 console.log('hey')
-                gotoLinnea();
+                
                 break;
 
             default:
@@ -174,6 +164,7 @@ function introAnimation() {
         controls.enabled = true //enable orbit controls
         //setOrbitControlsLimits() //enable controls limits
         TWEEN.remove(this) // remove the animation from memory
+        renderButtons();
     })
     
 }
@@ -191,6 +182,53 @@ function setOrbitControlsLimits(){
     controls.maxPolarAngle = Math.PI /2.2
 }
 
+
+function renderButtons() {
+    // linnea btn
+    const linnea_p = document.createElement('p');
+    linnea_p.className = 'tooltip show';
+    linnea_p.textContent = 'Linnea Model'
+    const linnea_Container = document.createElement('div');
+    linnea_Container.appendChild(linnea_p);
+    linnea_Container.style.cursor = "pointer";
+    const linnea_PointLabel = new CSS2DObject(linnea_Container);
+    linnea_PointLabel.position.set(-41, 6, -13.5);
+    scene.add(linnea_PointLabel);
+    linnea_Container.addEventListener('pointerdown', () => { 
+        linnea_modal.toggle();
+        gotoLinnea();
+    })
+
+    // jasmine btn
+    const jasmine_p = document.createElement('p');
+    jasmine_p.className = 'tooltip show';
+    jasmine_p.textContent = 'Jasmine Model'
+    const jasmine_Container = document.createElement('div');
+    jasmine_Container.appendChild(jasmine_p);
+    jasmine_Container.style.cursor = "pointer";
+    const jasmine_PointLabel = new CSS2DObject(jasmine_Container);
+    jasmine_PointLabel.position.set(-4, 6, -22);
+    scene.add(jasmine_PointLabel);
+    jasmine_Container.addEventListener('pointerdown', () => { 
+        jasmine_modal.toggle();
+        // gotoJasmine();
+    })
+
+    // clubhouse btn
+    const cb_p = document.createElement('p');
+    cb_p.className = 'tooltip show';
+    cb_p.textContent = 'CPR Information'
+    const cb_Container = document.createElement('div');
+    cb_Container.appendChild(cb_p);
+    cb_Container.style.cursor = "pointer";
+    const cb_PointLabel = new CSS2DObject(cb_Container);
+    cb_PointLabel.position.set(-33, 6, -19);
+    scene.add(cb_PointLabel);
+    cb_Container.addEventListener('pointerdown', () => { 
+        club_house.toggle();
+        // gotoJasmine();
+    })
+}
 /////////////////////////////////////////////////////////////////////////
 //// RENDER LOOP FUNCTION
 function rendeLoop() {
@@ -208,39 +246,39 @@ function rendeLoop() {
 rendeLoop() //start rendering
 
 
-// debugger
-// import { GUI } from 'three/examples/jsm/libs/dat.gui.module.js'
-// const gui = new GUI()
+debugger
+import { GUI } from 'three/examples/jsm/libs/dat.gui.module.js'
+const gui = new GUI()
 
-// // create parameters for GUI
-// var params = {color: sunLight.color.getHex(), color2: ambient.color.getHex(), color3: scene.background.getHex()}
+// create parameters for GUI
+var params = {color: sunLight.color.getHex(), color2: ambient.color.getHex(), color3: scene.background.getHex()}
 
-// // create a function to be called by GUI
-// const update = function () {
-// 	var colorObj = new THREE.Color( params.color )
-// 	var colorObj2 = new THREE.Color( params.color2 )
-// 	var colorObj3 = new THREE.Color( params.color3 )
-// 	sunLight.color.set(colorObj)
-// 	ambient.color.set(colorObj2)
-// 	scene.background.set(colorObj3)
-// }
+// create a function to be called by GUI
+const update = function () {
+	var colorObj = new THREE.Color( params.color )
+	var colorObj2 = new THREE.Color( params.color2 )
+	var colorObj3 = new THREE.Color( params.color3 )
+	sunLight.color.set(colorObj)
+	ambient.color.set(colorObj2)
+	scene.background.set(colorObj3)
+}
 
-// //////////////////////////////////////////////////
-// //// GUI CONFIG
-// gui.add(sunLight, 'intensity').min(0).max(10).step(0.0001).name('Dir intensity')
-// gui.add(sunLight.position, 'x').min(-100).max(100).step(0.00001).name('Dir X pos')
-// gui.add(sunLight.position, 'y').min(0).max(100).step(0.00001).name('Dir Y pos')
-// gui.add(sunLight.position, 'z').min(-100).max(100).step(0.00001).name('Dir Z pos')
-// gui.addColor(params,'color').name('Dir color').onChange(update)
-// gui.addColor(params,'color2').name('Amb color').onChange(update)
-// gui.add(ambient, 'intensity').min(0).max(10).step(0.001).name('Amb intensity')
-// gui.addColor(params,'color3').name('BG color').onChange(update)
+//////////////////////////////////////////////////
+//// GUI CONFIG
+gui.add(sunLight, 'intensity').min(0).max(10).step(0.0001).name('Dir intensity')
+gui.add(sunLight.position, 'x').min(-100).max(100).step(0.00001).name('Dir X pos')
+gui.add(sunLight.position, 'y').min(0).max(100).step(0.00001).name('Dir Y pos')
+gui.add(sunLight.position, 'z').min(-100).max(100).step(0.00001).name('Dir Z pos')
+gui.addColor(params,'color').name('Dir color').onChange(update)
+gui.addColor(params,'color2').name('Amb color').onChange(update)
+gui.add(ambient, 'intensity').min(0).max(10).step(0.001).name('Amb intensity')
+gui.addColor(params,'color3').name('BG color').onChange(update)
 
-// //////////////////////////////////////////////////
-// //// ON MOUSE MOVE TO GET CAMERA POSITION
-// document.addEventListener('mousemove', (event) => {
-//     event.preventDefault()
+//////////////////////////////////////////////////
+//// ON MOUSE MOVE TO GET CAMERA POSITION
+document.addEventListener('mousemove', (event) => {
+    event.preventDefault()
 
-//     console.log(camera.position)
+    console.log(camera.position)
 
-// }, false)
+}, false)
