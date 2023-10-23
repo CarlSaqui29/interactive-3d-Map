@@ -1,5 +1,3 @@
-/////////////////////////////////////////////////////////////////////////
-///// IMPORT
 import './main.css'
 import * as THREE from 'three'
 import { TWEEN } from 'three/examples/jsm/libs/tween.module.min.js'
@@ -8,9 +6,9 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer';
 
-
 const lodingManager = new THREE.LoadingManager();
 
+// responsible for pre-loader page
 const preloadingPage = document.querySelector('.loader');
 lodingManager.onLoad = function() {
     preloadingPage.style.display = 'none';
@@ -62,7 +60,6 @@ const labelRenderer = new CSS2DRenderer();
 labelRenderer.setSize(window.innerWidth, window.innerHeight);
 labelRenderer.domElement.style.position = "absolute";
 labelRenderer.domElement.style.top = '0px';
-// labelRenderer.domElement.style.pointerEvents = "none";
 document.body.appendChild(labelRenderer.domElement);
 
 /////////////////////////////////////////////////////////////////////////
@@ -72,7 +69,6 @@ window.addEventListener('resize', () => {
     const height = window.innerHeight
     camera.aspect = width / height
     camera.updateProjectionMatrix()
-
     renderer.setSize(width, height)
     renderer.setPixelRatio(2)
     labelRenderer.setSize(this.window.innerWidth, this.window.innerHeight);
@@ -98,43 +94,9 @@ loader.load('models/gltf/MAPY.glb', function (gltf) {
     
 })
 
-function createAnnotations(name, x,y,z) {
-    const geo = new THREE.SphereGeometry(0.1);
-    const mat = new THREE.MeshBasicMaterial({color: 0xFFFFFF});
-    const mesh = new THREE.Mesh(geo, mat);
-    mesh.position.set(x,y,z);
-    mesh.name = name;
-    return mesh;
-}
-
-const group = new THREE.Group();
-
-const btn1 = createAnnotations('Annotation1', -41, 5.5, -13.5);
-group.add(btn1);
-scene.add(group);
- 
-const mousePos = new THREE.Vector2();
-const raycaster = new THREE.Raycaster();
-
-window.addEventListener('click', function(e) {
-    mousePos.x = (e.clientX / this.window.innerWidth) * 2 - 1;
-    mousePos.y = -(e.clientY / this.window.innerHeight) * 2 + 1;
-
-    raycaster.setFromCamera(mousePos, camera);
-    const intersects = raycaster.intersectObject(group);
-    if(intersects.length > 0) {
-        switch(intersects[0].object.name) {
-            case 'Annotation1':
-                console.log('hey')
-                
-                break;
-
-            default:
-                break;
-        }
-    }
-
-});
+introAnimation();
+setOrbitControlsLimits();
+rendeLoop();
 
 function gotoLinnea() {
     new TWEEN.Tween(camera.position).to({
@@ -149,11 +111,8 @@ function gotoLinnea() {
     })
 }
 
-/////////////////////////////////////////////////////////////////////////
-//// INTRO CAMERA ANIMATION USING TWEEN
 function introAnimation() {
     controls.enabled = false //disable orbit controls to animate the camera
-    
     new TWEEN.Tween(camera.position.set(64,26,7)).to({ // from camera position
         x: -65, //desired x position to go
         y: 17, //desired y position to go
@@ -169,11 +128,6 @@ function introAnimation() {
     
 }
 
-introAnimation() // call intro animation on start
-setOrbitControlsLimits()
-
-/////////////////////////////////////////////////////////////////////////
-//// DEFINE ORBIT CONTROLS LIMITS
 function setOrbitControlsLimits(){
     controls.minDistance = 10
     controls.maxDistance = 150
@@ -181,7 +135,6 @@ function setOrbitControlsLimits(){
     controls.enableZoom = true
     controls.maxPolarAngle = Math.PI /2.2
 }
-
 
 function renderButtons() {
     // linnea btn
@@ -229,23 +182,18 @@ function renderButtons() {
         // gotoJasmine();
     })
 }
-/////////////////////////////////////////////////////////////////////////
-//// RENDER LOOP FUNCTION
+
 function rendeLoop() {
     labelRenderer.render(scene, camera);
     TWEEN.update() // update animations
-
     controls.update() // update orbit controls
-
     renderer.render(scene, camera) // render the scene using the camera
-
     requestAnimationFrame(rendeLoop) //loop the render function
-    
 }
 
-rendeLoop() //start rendering
 
 
+// debugger - to be deleted
 debugger
 import { GUI } from 'three/examples/jsm/libs/dat.gui.module.js'
 const gui = new GUI()
