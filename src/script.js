@@ -52,7 +52,7 @@ const labelRenderer = new CSS2DRenderer();
 labelRenderer.setSize(window.innerWidth, window.innerHeight);
 labelRenderer.domElement.style.position = "absolute";
 labelRenderer.domElement.style.top = '0px';
-labelRenderer.domElement.style.pointerEvents = "none";
+// labelRenderer.domElement.style.pointerEvents = "none";
 document.body.appendChild(labelRenderer.domElement);
 
 /////////////////////////////////////////////////////////////////////////
@@ -70,7 +70,7 @@ window.addEventListener('resize', () => {
 
 /////////////////////////////////////////////////////////////////////////
 ///// CREATE ORBIT CONTROLS
-const controls = new OrbitControls(camera, renderer.domElement)
+const controls = new OrbitControls(camera, labelRenderer.domElement)
 
 /////////////////////////////////////////////////////////////////////////
 ///// SCENE LIGHTS
@@ -108,6 +108,9 @@ p.className = 'tooltip show';
 p.textContent = 'Linnea Model'
 const pContainer = document.createElement('div');
 pContainer.appendChild(p);
+pContainer.style.zIndex = 100;
+pContainer.style.position = 'absolute';
+pContainer.addEventListener('pointerdown', () => { alert(1) })
 const cPointLabel = new CSS2DObject(pContainer);
 cPointLabel.position.set(-41, 6, -13.5);
 scene.add(cPointLabel);
@@ -168,17 +171,16 @@ function introAnimation() {
 }
 
 introAnimation() // call intro animation on start
+setOrbitControlsLimits()
 
 /////////////////////////////////////////////////////////////////////////
 //// DEFINE ORBIT CONTROLS LIMITS
 function setOrbitControlsLimits(){
-    controls.enableDamping = true
-    controls.dampingFactor = 0.04
-    controls.minDistance = 35
-    controls.maxDistance = 60
+    controls.minDistance = 10
+    controls.maxDistance = 150
     controls.enableRotate = true
     controls.enableZoom = true
-    controls.maxPolarAngle = Math.PI /2.5
+    controls.maxPolarAngle = Math.PI /2.2
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -197,38 +199,40 @@ function rendeLoop() {
 
 rendeLoop() //start rendering
 
-import { GUI } from 'three/examples/jsm/libs/dat.gui.module.js'
-const gui = new GUI()
 
-// create parameters for GUI
-var params = {color: sunLight.color.getHex(), color2: ambient.color.getHex(), color3: scene.background.getHex()}
+// debugger
+// import { GUI } from 'three/examples/jsm/libs/dat.gui.module.js'
+// const gui = new GUI()
 
-// create a function to be called by GUI
-const update = function () {
-	var colorObj = new THREE.Color( params.color )
-	var colorObj2 = new THREE.Color( params.color2 )
-	var colorObj3 = new THREE.Color( params.color3 )
-	sunLight.color.set(colorObj)
-	ambient.color.set(colorObj2)
-	scene.background.set(colorObj3)
-}
+// // create parameters for GUI
+// var params = {color: sunLight.color.getHex(), color2: ambient.color.getHex(), color3: scene.background.getHex()}
 
-//////////////////////////////////////////////////
-//// GUI CONFIG
-gui.add(sunLight, 'intensity').min(0).max(10).step(0.0001).name('Dir intensity')
-gui.add(sunLight.position, 'x').min(-100).max(100).step(0.00001).name('Dir X pos')
-gui.add(sunLight.position, 'y').min(0).max(100).step(0.00001).name('Dir Y pos')
-gui.add(sunLight.position, 'z').min(-100).max(100).step(0.00001).name('Dir Z pos')
-gui.addColor(params,'color').name('Dir color').onChange(update)
-gui.addColor(params,'color2').name('Amb color').onChange(update)
-gui.add(ambient, 'intensity').min(0).max(10).step(0.001).name('Amb intensity')
-gui.addColor(params,'color3').name('BG color').onChange(update)
+// // create a function to be called by GUI
+// const update = function () {
+// 	var colorObj = new THREE.Color( params.color )
+// 	var colorObj2 = new THREE.Color( params.color2 )
+// 	var colorObj3 = new THREE.Color( params.color3 )
+// 	sunLight.color.set(colorObj)
+// 	ambient.color.set(colorObj2)
+// 	scene.background.set(colorObj3)
+// }
 
-//////////////////////////////////////////////////
-//// ON MOUSE MOVE TO GET CAMERA POSITION
-document.addEventListener('mousemove', (event) => {
-    event.preventDefault()
+// //////////////////////////////////////////////////
+// //// GUI CONFIG
+// gui.add(sunLight, 'intensity').min(0).max(10).step(0.0001).name('Dir intensity')
+// gui.add(sunLight.position, 'x').min(-100).max(100).step(0.00001).name('Dir X pos')
+// gui.add(sunLight.position, 'y').min(0).max(100).step(0.00001).name('Dir Y pos')
+// gui.add(sunLight.position, 'z').min(-100).max(100).step(0.00001).name('Dir Z pos')
+// gui.addColor(params,'color').name('Dir color').onChange(update)
+// gui.addColor(params,'color2').name('Amb color').onChange(update)
+// gui.add(ambient, 'intensity').min(0).max(10).step(0.001).name('Amb intensity')
+// gui.addColor(params,'color3').name('BG color').onChange(update)
 
-    console.log(camera.position)
+// //////////////////////////////////////////////////
+// //// ON MOUSE MOVE TO GET CAMERA POSITION
+// document.addEventListener('mousemove', (event) => {
+//     event.preventDefault()
 
-}, false)
+//     console.log(camera.position)
+
+// }, false)
