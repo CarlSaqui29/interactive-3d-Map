@@ -5,6 +5,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer';
+import { gsap } from "gsap";
 
 const lodingManager = new THREE.LoadingManager();
 
@@ -99,42 +100,18 @@ setOrbitControlsLimits();
 rendeLoop();
 
 function gotoLinnea() {
-    new TWEEN.Tween(camera.position).to({
-        x: -50,
-        y: 6,
-        z: -18
-    }, 1800)
-    .delay(100).easing(TWEEN.Easing.Quartic.InOut).start()
-    .onComplete(function () {
-        controls.enabled = true
-        TWEEN.remove(this)
-    })
+    gsap.to(controls.target,{x: -40, y: 2, z: -5, duration: 2, ease: 'power3.inOut'})
+    gsap.to(camera.position,{x: -48, y: 9, z: -21, duration: 2, ease: 'power3.inOut'})
 }
 
 function gotoJasmine() {
-    new TWEEN.Tween(camera.position).to({
-        x: -15,
-        y: 9,
-        z: -20
-    }, 1800)
-    .delay(100).easing(TWEEN.Easing.Quartic.InOut).start()
-    .onComplete(function () {
-        controls.enabled = true
-        TWEEN.remove(this)
-    })
+    gsap.to(controls.target,{x: -15, y: 9, z: -20, duration: 2, ease: 'power3.inOut'})
+    gsap.to(camera.position,{x: -25, y: 9, z: -20, duration: 2, ease: 'power3.inOut'})
 }
 
 function gotoClubhouse() {
-    new TWEEN.Tween(camera.position).to({
-        x: -43,
-        y: 6,
-        z: -22
-    }, 1800)
-    .delay(100).easing(TWEEN.Easing.Quartic.InOut).start()
-    .onComplete(function () {
-        controls.enabled = true
-        TWEEN.remove(this)
-    })
+    gsap.to(controls.target,{x: -15, y: 2, z: -10, duration: 2, ease: 'power3.inOut'})
+    gsap.to(camera.position,{x: -46, y: 6, z: -22, duration: 2, ease: 'power3.inOut'})
 }
 
 function introAnimation() {
@@ -210,6 +187,7 @@ function renderButtons() {
 }
 
 function rendeLoop() {
+    console.log(camera.position)
     labelRenderer.render(scene, camera);
     TWEEN.update() // update animations
     controls.update() // update orbit controls
