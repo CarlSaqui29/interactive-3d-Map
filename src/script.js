@@ -180,6 +180,26 @@ function renderButtons() {
     })
 }
 
+function renderButtons_jasmine() {
+    // jasmine btn
+    const jasmine_p = document.createElement('p');
+    jasmine_p.className = 'tooltip show';
+    jasmine_p.textContent = 'Go Back to CPR Map'
+    const jasmine_Container = document.createElement('div');
+    jasmine_Container.appendChild(jasmine_p);
+    jasmine_Container.style.cursor = "pointer";
+    const jasmine_PointLabel = new CSS2DObject(jasmine_Container);
+    jasmine_PointLabel.position.set(-10, 10, 13.5);
+    scene.add(jasmine_PointLabel);
+    jasmine_Container.addEventListener('pointerdown', () => { 
+        remove_current_model();
+        setup_lighting();
+        preloadingPage.style.visibility = 'visible';
+        load_gltf('models/gltf/MAPY.glb', 0);
+        introAnimation();
+    })
+}
+
 function rendeLoop() {
     console.log(camera.position)
     // document.getElementById("cameraPos").innerHTML = camera.position;
@@ -204,10 +224,11 @@ function remove_current_model() {
 function show_jasmine_model() {
     jasmine_modal.toggle();
     remove_current_model();
-    setup_lighting()
+    setup_lighting();
     preloadingPage.style.visibility = 'visible';
-    load_gltf('models/gltf/jasmine_default.glb', 8)
+    load_gltf('models/gltf/jasmine_interior.glb', 8)
     gsap.to(camera.position,{x: 25, y: 12, z: 22, duration: 5, ease: 'power3.inOut'})
+    renderButtons_jasmine()
     // gsap.to(controls.target,{x: 0, y: 0, z: 100, duration: 2, ease: 'power3.inOut'})
     // gsap.to(camera.position,{x: 0, y: 7, z: -18, duration: 5, ease: 'power3.inOut'})
 }
