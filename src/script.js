@@ -7,13 +7,16 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer';
 import { gsap } from "gsap";
 
+// pre-loding page
 const lodingManager = new THREE.LoadingManager();
-
-// responsible for pre-loader page
 const preloadingPage = document.querySelector('.loader');
 lodingManager.onLoad = function() {
-    preloadingPage.style.display = 'none';
+    preloadingPage.style.visibility = 'hidden';
 }
+
+// visit models methods
+const jasmine_btn = document.querySelector('#jasmine_btn');
+jasmine_btn.onclick = function() { show_jasmine_model() };
 
 // modals instance
 var linnea_modal = new bootstrap.Modal(document.getElementById('linnea_modal'), {
@@ -25,21 +28,18 @@ var jasmine_modal = new bootstrap.Modal(document.getElementById('jasmine_modal')
 var club_house = new bootstrap.Modal(document.getElementById('club_house'), {
     keyboard: false
 })
-/////////////////////////////////////////////////////////////////////////
-//// DRACO LOADER TO LOAD DRACO COMPRESSED MODELS FROM BLENDER
+
+// draco loader to compress 3d model
 const dracoLoader = new DRACOLoader()
 const loader = new GLTFLoader(lodingManager)
 dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/')
 dracoLoader.setDecoderConfig({ type: 'js' })
 loader.setDRACOLoader(dracoLoader)
 
-/////////////////////////////////////////////////////////////////////////
-///// DIV CONTAINER CREATION TO HOLD THREEJS EXPERIENCE
+// add div to append 3d model
 const container = document.createElement('div')
 document.body.appendChild(container)
-
-/////////////////////////////////////////////////////////////////////////
-///// SCENE CREATION
+// setting scene cbg color
 const scene = new THREE.Scene()
 scene.background = new THREE.Color('#c8f0f9')
 
@@ -51,8 +51,7 @@ renderer.setSize(window.innerWidth, window.innerHeight) // make it full screen
 renderer.outputEncoding = THREE.sRGBEncoding // set color encoding
 container.appendChild(renderer.domElement) // add the renderer to html div
 
-/////////////////////////////////////////////////////////////////////////
-///// CAMERAS CONFIG
+// set camera
 const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 1, 500)
 camera.position.set(34,16,-20)
 scene.add(camera)
@@ -79,24 +78,20 @@ window.addEventListener('resize', () => {
 ///// CREATE ORBIT CONTROLS
 const controls = new OrbitControls(camera, labelRenderer.domElement)
 
-/////////////////////////////////////////////////////////////////////////
-///// SCENE LIGHTS
-const ambient = new THREE.AmbientLight(0xa0a0fc, 0.82)
-scene.add(ambient)
-
-const sunLight = new THREE.DirectionalLight(0xe8c37b, .96)
-sunLight.position.set(-69,44,14)
-scene.add(sunLight)
-
-/////////////////////////////////////////////////////////////////////////
-///// LOADING GLB/GLTF MODEL FROM BLENDER
-loader.load('models/gltf/MAPY.glb', function (gltf) {
-    scene.add(gltf.scene);
-})
-
+load_gltf('models/gltf/MAPY.glb', 0);
+setup_lighting();
 introAnimation();
 setOrbitControlsLimits();
 rendeLoop();
+
+function setup_lighting() {
+    const ambient = new THREE.AmbientLight(0xa0a0fc, 0.82)
+    scene.add(ambient)
+
+    const sunLight = new THREE.DirectionalLight(0xe8c37b, .96)
+    sunLight.position.set(-69,44,14)
+    scene.add(sunLight)
+}
 
 function gotoLinnea() {
     gsap.to(controls.target,{x: -40, y: 2, z: -5, duration: 2, ease: 'power3.inOut'})
@@ -131,7 +126,7 @@ function introAnimation() {
 }
 
 function setOrbitControlsLimits(){
-    controls.minDistance = 10
+    controls.minDistance = 1
     controls.maxDistance = 150
     controls.enableRotate = true
     controls.enableZoom = true
@@ -187,9 +182,69 @@ function renderButtons() {
 
 function rendeLoop() {
     console.log(camera.position)
+    // document.getElementById("cameraPos").innerHTML = camera.position;
     labelRenderer.render(scene, camera);
     TWEEN.update() // update animations
     controls.update() // update orbit controls
     renderer.render(scene, camera) // render the scene using the camera
     requestAnimationFrame(rendeLoop) //loop the render function
 }
+function load_gltf(path, Ypos) {
+    loader.load(path, function (gltf) {
+        scene.add(gltf.scene);
+        gltf.scene.position.setY(Ypos);
+    })
+}
+function remove_current_model() {
+    while(scene.children.length > 0){ 
+        scene.remove(scene.children[0]); 
+    }
+}
+
+function show_jasmine_model() {
+    jasmine_modal.toggle();
+    remove_current_model();
+    setup_lighting()
+    preloadingPage.style.visibility = 'visible';
+    load_gltf('models/gltf/jasmine_default.glb', 8)
+    gsap.to(camera.position,{x: 25, y: 12, z: 22, duration: 5, ease: 'power3.inOut'})
+    // gsap.to(controls.target,{x: 0, y: 0, z: 100, duration: 2, ease: 'power3.inOut'})
+    // gsap.to(camera.position,{x: 0, y: 7, z: -18, duration: 5, ease: 'power3.inOut'})
+}
+
+
+import { GUI } from 'three/examples/jsm/libs/dat.gui.module.js'
+const gui = new GUI()
+
+// create parameters for GUI
+var params = {color: sunLight.color.getHex(), color2: ambient.color.getHex(), color3: scene.background.getHex()}
+
+// create a function to be called by GUI
+const update = function () {
+	var colorObj = new THREE.Color( params.color )
+	var colorObj2 = new THREE.Color( params.color2 )
+	var colorObj3 = new THREE.Color( params.color3 )
+	sunLight.color.set(colorObj)
+	ambient.color.set(colorObj2)
+	scene.background.set(colorObj3)
+}
+
+//////////////////////////////////////////////////
+//// GUI CONFIG
+gui.add(sunLight, 'intensity').min(0).max(10).step(0.0001).name('Dir intensity')
+gui.add(sunLight.position, 'x').min(-100).max(100).step(0.00001).name('Dir X pos')
+gui.add(sunLight.position, 'y').min(0).max(100).step(0.00001).name('Dir Y pos')
+gui.add(sunLight.position, 'z').min(-100).max(100).step(0.00001).name('Dir Z pos')
+gui.addColor(params,'color').name('Dir color').onChange(update)
+gui.addColor(params,'color2').name('Amb color').onChange(update)
+gui.add(ambient, 'intensity').min(0).max(10).step(0.001).name('Amb intensity')
+gui.addColor(params,'color3').name('BG color').onChange(update)
+
+//////////////////////////////////////////////////
+//// ON MOUSE MOVE TO GET CAMERA POSITION
+document.addEventListener('mousemove', (event) => {
+    event.preventDefault()
+
+    console.log(camera.position)
+
+}, false)
