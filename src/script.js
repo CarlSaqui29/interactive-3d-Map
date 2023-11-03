@@ -7,6 +7,8 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer';
 import { gsap } from "gsap";
 
+const back_btn = document.querySelector('#back_btn');
+
 // pre-loding page
 const lodingManager = new THREE.LoadingManager();
 const preloadingPage = document.querySelector('.loader');
@@ -180,23 +182,34 @@ function renderButtons() {
     })
 }
 
+function renderBackButton() {
+    back_btn.style.display = "block";
+    back_btn.addEventListener("click", goBack);
+}
+
+function goBack() {
+    remove_current_model();
+    setup_lighting();
+    controls.reset(); //reset camera rotation
+    preloadingPage.style.visibility = 'visible';
+    load_gltf('models/gltf/MAPY.glb', 0);
+    introAnimation();
+}
+
 function renderButtons_jasmine() {
     // jasmine btn
     const jasmine_p = document.createElement('p');
     jasmine_p.className = 'tooltip show';
-    jasmine_p.textContent = 'Go Back to CPR Map'
+    jasmine_p.textContent = 'See Interior'
     const jasmine_Container = document.createElement('div');
     jasmine_Container.appendChild(jasmine_p);
     jasmine_Container.style.cursor = "pointer";
     const jasmine_PointLabel = new CSS2DObject(jasmine_Container);
-    jasmine_PointLabel.position.set(-10, 10, 13.5);
+    jasmine_PointLabel.position.set(-3, 15, -2);
     scene.add(jasmine_PointLabel);
     jasmine_Container.addEventListener('pointerdown', () => { 
-        remove_current_model();
-        setup_lighting();
-        preloadingPage.style.visibility = 'visible';
-        load_gltf('models/gltf/MAPY.glb', 0);
-        introAnimation();
+        gsap.to(camera.position,{x: 0, y: 7, z: -18, duration: 2, ease: 'power3.inOut'})
+        gsap.to(controls.target,{x: 0, y: 0, z: 100, duration: 2, ease: 'power3.inOut'})
     })
 }
 
@@ -228,44 +241,12 @@ function show_jasmine_model() {
     preloadingPage.style.visibility = 'visible';
     load_gltf('models/gltf/jasmine_interior.glb', 8)
     gsap.to(camera.position,{x: 25, y: 12, z: 22, duration: 5, ease: 'power3.inOut'})
-    renderButtons_jasmine()
-    // gsap.to(controls.target,{x: 0, y: 0, z: 100, duration: 2, ease: 'power3.inOut'})
-    // gsap.to(camera.position,{x: 0, y: 7, z: -18, duration: 5, ease: 'power3.inOut'})
+    
+    // render this buttons after animation/loading
+    renderButtons_jasmine();
+    renderBackButton()
 }
 
 
 import { GUI } from 'three/examples/jsm/libs/dat.gui.module.js'
 const gui = new GUI()
-
-// create parameters for GUI
-var params = {color: sunLight.color.getHex(), color2: ambient.color.getHex(), color3: scene.background.getHex()}
-
-// create a function to be called by GUI
-const update = function () {
-	var colorObj = new THREE.Color( params.color )
-	var colorObj2 = new THREE.Color( params.color2 )
-	var colorObj3 = new THREE.Color( params.color3 )
-	sunLight.color.set(colorObj)
-	ambient.color.set(colorObj2)
-	scene.background.set(colorObj3)
-}
-
-//////////////////////////////////////////////////
-//// GUI CONFIG
-gui.add(sunLight, 'intensity').min(0).max(10).step(0.0001).name('Dir intensity')
-gui.add(sunLight.position, 'x').min(-100).max(100).step(0.00001).name('Dir X pos')
-gui.add(sunLight.position, 'y').min(0).max(100).step(0.00001).name('Dir Y pos')
-gui.add(sunLight.position, 'z').min(-100).max(100).step(0.00001).name('Dir Z pos')
-gui.addColor(params,'color').name('Dir color').onChange(update)
-gui.addColor(params,'color2').name('Amb color').onChange(update)
-gui.add(ambient, 'intensity').min(0).max(10).step(0.001).name('Amb intensity')
-gui.addColor(params,'color3').name('BG color').onChange(update)
-
-//////////////////////////////////////////////////
-//// ON MOUSE MOVE TO GET CAMERA POSITION
-document.addEventListener('mousemove', (event) => {
-    event.preventDefault()
-
-    console.log(camera.position)
-
-}, false)
