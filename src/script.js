@@ -20,7 +20,9 @@ lodingManager.onLoad = function() {
 
 // visit models methods
 const jasmine_btn = document.querySelector('#jasmine_btn');
+const linnea_btn = document.querySelector('#linnea_btn');
 jasmine_btn.onclick = function() { show_jasmine_model() };
+linnea_btn.onclick = function() { show_linnea_model() };
 
 // modals instance
 var linnea_modal = new bootstrap.Modal(document.getElementById('linnea_modal'), {
@@ -163,6 +165,18 @@ function lookAtCurrent3dModel() {
             break
         case 'jasmine_interior':
             remove_specific_model('jasmine_interior');
+            break
+        case 'linnea_default':
+            remove_specific_model('linnea_default');
+            break
+        case 'linnea_1stfloor':
+            remove_specific_model('linnea_1stfloor');
+            break
+        case 'linnea_2ndfloor':
+            remove_specific_model('linnea_2ndfloor');
+            break
+        case 'linnea_interior':
+            remove_specific_model('linnea_interior');
             break
     }
 }
@@ -361,6 +375,129 @@ function renderButtons_jasmine() {
                 lookAtCurrent3dModel()
                 current_3d_model = 'jasmine_2ndfloor';
                 load_gltf('models/gltf/jasmine_2ndfloor.glb', 8.6, 'jasmine_2ndfloor')
+            }
+        })
+    })
+}
+
+// Jasmin Model Methods
+function show_linnea_model() {
+    current_3d_model = 'linnea_default';
+    linnea_modal.toggle();
+    remove_current_model();
+    setup_lighting();
+    preloadingPage.style.visibility = 'visible';
+    load_gltf('models/gltf/plane.glb', 8, 'plane')
+    load_gltf('models/gltf/linnea_default.glb', 8, 'linnea_default')
+    new TWEEN.Tween(camera.position).to({
+        x: 25,
+        y: 12,
+        z: 22
+    }, 5000)
+    .delay(500).easing(TWEEN.Easing.Quartic.InOut).start()
+    .onComplete(function () {
+        renderBackButton()
+        renderButtons_linnea();
+    })
+}
+function renderButtons_linnea() {
+    // jasmine btn
+    const interior_p = document.createElement('p');
+    interior_p.className = 'tooltip show';
+    interior_p.textContent = 'See Interior'
+    const interior_container = document.createElement('div');
+    interior_container.appendChild(interior_p);
+    interior_container.style.cursor = "pointer";
+    const interior_Pointlabel = new CSS2DObject(interior_container);
+    interior_Pointlabel.position.set(-3, 15, -2);
+    scene.add(interior_Pointlabel);
+    interior_container.addEventListener('pointerdown', () => {
+        gsap.to(camera.position,{x: 0, y: 7, z: -18, duration: 2, ease: 'power3.inOut'})
+        gsap.to(controls.target,{
+            x: 0,
+            y: 0,
+            z: 100,
+            duration: 2,
+            ease: 'power3.inOut',
+            onComplete() {
+                lookAtCurrent3dModel()
+                current_3d_model = 'linnea_interior';
+                load_gltf('models/gltf/linnea_interior.glb', 8, 'linnea_interior')
+            }
+        })
+    })
+
+    const lookAround_p = document.createElement('p');
+    lookAround_p.className = 'tooltip show';
+    lookAround_p.textContent = 'Look Around'
+    const lookAround_Container = document.createElement('div');
+    lookAround_Container.appendChild(lookAround_p);
+    lookAround_Container.style.cursor = "pointer";
+    const lookAround_PointLabel = new CSS2DObject(lookAround_Container);
+    lookAround_PointLabel.position.set(5, 10, 4);
+    scene.add(lookAround_PointLabel);
+    lookAround_Container.addEventListener('pointerdown', () => {
+        gsap.to(camera.position,{x: 25, y: 8, z: 22, duration: 5, ease: 'power3.inOut'})
+        gsap.to(controls.target,{
+            x: 0,
+            y: 10,
+            z: 0,
+            duration: 2,
+            ease: 'power3.inOut',
+            onComplete() {
+                lookAtCurrent3dModel()
+                current_3d_model = 'linnea_default';
+                load_gltf('models/gltf/linnea_default.glb', 8, 'linnea_default')
+            }
+        })
+    })
+
+    // const floor_1st_p = document.createElement('p');
+    // floor_1st_p.className = 'tooltip show';
+    // floor_1st_p.textContent = '1st Floor'
+    // const floor_1st_conatiner = document.createElement('div');
+    // floor_1st_conatiner.appendChild(floor_1st_p);
+    // floor_1st_conatiner.style.cursor = "pointer";
+    // const floor_1st_PointLabel = new CSS2DObject(floor_1st_conatiner);
+    // floor_1st_PointLabel.position.set(0, 11, 6);
+    // scene.add(floor_1st_PointLabel);
+    // floor_1st_conatiner.addEventListener('pointerdown', () => {
+    //     gsap.to(camera.position,{x: 0, y: 30, z: 0, duration: 5, ease: 'power3.inOut'})
+    //     gsap.to(controls.target,{
+    //         x: 0,
+    //         y: 10,
+    //         z: 2,
+    //         duration: 2,
+    //         ease: 'power3.inOut',
+    //         onComplete() {
+    //             lookAtCurrent3dModel()
+    //             current_3d_model = 'jasmine_1stfloor';
+    //             load_gltf('models/gltf/jasmine_1stfloor.glb', 8.6, 'jasmine_1stfloor')
+    //         }
+    //     })
+    // })
+
+    const floor_2nd_p = document.createElement('p');
+    floor_2nd_p.className = 'tooltip show';
+    floor_2nd_p.textContent = '2nd Floor'
+    const floor_2nd_conatiner = document.createElement('div');
+    floor_2nd_conatiner.appendChild(floor_2nd_p);
+    floor_2nd_conatiner.style.cursor = "pointer";
+    const floor_2nd_PointLabel = new CSS2DObject(floor_2nd_conatiner);
+    floor_2nd_PointLabel.position.set(0, 15, 6);
+    scene.add(floor_2nd_PointLabel);
+    floor_2nd_conatiner.addEventListener('pointerdown', () => {
+        gsap.to(camera.position,{x: 0, y: 30, z: 0, duration: 5, ease: 'power3.inOut'})
+        gsap.to(controls.target,{
+            x: 0,
+            y: 10,
+            z: 2,
+            duration: 2,
+            ease: 'power3.inOut',
+            onComplete() {
+                lookAtCurrent3dModel()
+                current_3d_model = 'linnea_2ndfloor';
+                load_gltf('models/gltf/linnea_2ndfloor.glb', 8.6, 'linnea_2ndfloor')
             }
         })
     })
