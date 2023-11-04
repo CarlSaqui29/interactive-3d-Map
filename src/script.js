@@ -275,7 +275,6 @@ function renderButtons_jasmine() {
     scene.add(interior_Pointlabel);
     interior_container.addEventListener('pointerdown', () => {
         gsap.to(camera.position,{x: 0, y: 7, z: -18, duration: 2, ease: 'power3.inOut'})
-        // gsap.to(controls.target,{x: 0, y: 0, z: 100 , duration: 2, ease: 'power3.inOut'})
         gsap.to(controls.target,{
             x: 0,
             y: 0,
@@ -301,7 +300,6 @@ function renderButtons_jasmine() {
     scene.add(lookAround_PointLabel);
     lookAround_Container.addEventListener('pointerdown', () => {
         gsap.to(camera.position,{x: 25, y: 8, z: 22, duration: 5, ease: 'power3.inOut'})
-        gsap.to(controls.target,{x: 0, y: 10, z: 0, duration: 2, ease: 'power3.inOut'})
         gsap.to(controls.target,{
             x: 0,
             y: 10,
@@ -326,12 +324,11 @@ function renderButtons_jasmine() {
     floor_1st_PointLabel.position.set(0, 11, 6);
     scene.add(floor_1st_PointLabel);
     floor_1st_conatiner.addEventListener('pointerdown', () => {
-        gsap.to(camera.position,{x: 25, y: 8, z: 22, duration: 5, ease: 'power3.inOut'})
-        gsap.to(controls.target,{x: 0, y: 10, z: 0, duration: 2, ease: 'power3.inOut'})
+        gsap.to(camera.position,{x: 0, y: 30, z: 0, duration: 5, ease: 'power3.inOut'})
         gsap.to(controls.target,{
             x: 0,
             y: 10,
-            z: 0,
+            z: 2,
             duration: 2,
             ease: 'power3.inOut',
             onComplete() {
