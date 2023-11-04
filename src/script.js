@@ -83,7 +83,7 @@ const controls = new OrbitControls(camera, labelRenderer.domElement)
 load_gltf('models/gltf/MAPY.glb', 0);
 setup_lighting();
 introAnimation();
-setOrbitControlsLimits();
+setOrbitControlsLimits(1, 150, true, true);
 rendeLoop();
 
 function setup_lighting() {
@@ -127,12 +127,15 @@ function introAnimation() {
     
 }
 
-function setOrbitControlsLimits(){
-    controls.minDistance = 1
-    controls.maxDistance = 150
-    controls.enableRotate = true
-    controls.enableZoom = true
+function setOrbitControlsLimits(minD, maxD, isRotate, isZoom, minAz, maxAz) {
+    controls.minDistance = minD
+    controls.maxDistance = maxD
+    controls.enableRotate = isRotate
+    controls.enableZoom = isZoom
+    controls.minAzimuthAngle = minAz
+    controls.maxAzimuthAngle = maxAz
     controls.maxPolarAngle = Math.PI /2.2
+    controls.enableDamping = true
 }
 
 function renderButtons() {
@@ -188,6 +191,7 @@ function renderBackButton() {
 }
 
 function goBack() {
+    back_btn.style.display = "none";
     remove_current_model();
     setup_lighting();
     controls.reset(); //reset camera rotation
@@ -207,9 +211,35 @@ function renderButtons_jasmine() {
     const jasmine_PointLabel = new CSS2DObject(jasmine_Container);
     jasmine_PointLabel.position.set(-3, 15, -2);
     scene.add(jasmine_PointLabel);
-    jasmine_Container.addEventListener('pointerdown', () => { 
+    jasmine_Container.addEventListener('pointerdown', () => {
         gsap.to(camera.position,{x: 0, y: 7, z: -18, duration: 2, ease: 'power3.inOut'})
-        gsap.to(controls.target,{x: 0, y: 0, z: 100, duration: 2, ease: 'power3.inOut'})
+        gsap.to(controls.target,{x: 0, y: 0, z: 100 , duration: 2, ease: 'power3.inOut'})
+        // gsap.to(controls.target,{
+        //     x: 0,
+        //     y: 0,
+        //     z: 100,
+        //     duration: 2,
+        //     ease: 'power3.inOut',
+        //     onComplete() {
+        //         // controls.enabled = false;
+        //         // controls.maxTargetRadius =.5
+        //     }
+        // })
+    })
+
+    const lookAround_p = document.createElement('p');
+    lookAround_p.className = 'tooltip show';
+    lookAround_p.textContent = 'Look Around'
+    const lookAround_Container = document.createElement('div');
+    lookAround_Container.appendChild(lookAround_p);
+    lookAround_Container.style.cursor = "pointer";
+    const lookAround_PointLabel = new CSS2DObject(lookAround_Container);
+    lookAround_PointLabel.position.set(10, 15, 10);
+    scene.add(lookAround_PointLabel);
+    lookAround_Container.addEventListener('pointerdown', () => {
+        gsap.to(camera.position,{x: 25, y: 12, z: 22, duration: 5, ease: 'power3.inOut'})
+        gsap.to(controls.target,{x: 0, y: 10, z: 0, duration: 2, ease: 'power3.inOut'})
+        controls.enabled = true;
     })
 }
 
@@ -240,11 +270,18 @@ function show_jasmine_model() {
     setup_lighting();
     preloadingPage.style.visibility = 'visible';
     load_gltf('models/gltf/jasmine_interior.glb', 8)
-    gsap.to(camera.position,{x: 25, y: 12, z: 22, duration: 5, ease: 'power3.inOut'})
+    new TWEEN.Tween(camera.position).to({
+        x: 25,
+        y: 12,
+        z: 22
+    }, 5000)
+    .delay(500).easing(TWEEN.Easing.Quartic.InOut).start()
+    .onComplete(function () {
+        renderBackButton()
+        renderButtons_jasmine();
+    })
+        
     
-    // render this buttons after animation/loading
-    renderButtons_jasmine();
-    renderBackButton()
 }
 
 
