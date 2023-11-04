@@ -8,6 +8,7 @@ import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRe
 import { gsap } from "gsap";
 
 const back_btn = document.querySelector('#back_btn');
+let current_3d_model = "";
 
 // pre-loding page
 const lodingManager = new THREE.LoadingManager();
@@ -86,6 +87,7 @@ introAnimation();
 setOrbitControlsLimits(1, 150, true, true);
 rendeLoop();
 
+// Global Methods
 function setup_lighting() {
     const ambient = new THREE.AmbientLight(0xa0a0fc, 0.82)
     scene.add(ambient)
@@ -94,22 +96,16 @@ function setup_lighting() {
     sunLight.position.set(-69,44,14)
     scene.add(sunLight)
 }
-
-function gotoLinnea() {
-    gsap.to(controls.target,{x: -40, y: 2, z: -5, duration: 2, ease: 'power3.inOut'})
-    gsap.to(camera.position,{x: -48, y: 9, z: -21, duration: 2, ease: 'power3.inOut'})
+function setOrbitControlsLimits(minD, maxD, isRotate, isZoom, minAz, maxAz) {
+    controls.minDistance = minD
+    controls.maxDistance = maxD
+    controls.enableRotate = isRotate
+    controls.enableZoom = isZoom
+    controls.minAzimuthAngle = minAz
+    controls.maxAzimuthAngle = maxAz
+    controls.maxPolarAngle = Math.PI /2.2
+    controls.enableDamping = true
 }
-
-function gotoJasmine() {
-    gsap.to(controls.target,{x: -15, y: 9, z: -20, duration: 2, ease: 'power3.inOut'})
-    gsap.to(camera.position,{x: -25, y: 9, z: -20, duration: 2, ease: 'power3.inOut'})
-}
-
-function gotoClubhouse() {
-    gsap.to(controls.target,{x: -15, y: 2, z: -10, duration: 2, ease: 'power3.inOut'})
-    gsap.to(camera.position,{x: -46, y: 6, z: -22, duration: 2, ease: 'power3.inOut'})
-}
-
 function introAnimation() {
     controls.enabled = false //disable orbit controls to animate the camera
     new TWEEN.Tween(camera.position.set(64,26,7)).to({ // from camera position
@@ -126,18 +122,64 @@ function introAnimation() {
     })
     
 }
-
-function setOrbitControlsLimits(minD, maxD, isRotate, isZoom, minAz, maxAz) {
-    controls.minDistance = minD
-    controls.maxDistance = maxD
-    controls.enableRotate = isRotate
-    controls.enableZoom = isZoom
-    controls.minAzimuthAngle = minAz
-    controls.maxAzimuthAngle = maxAz
-    controls.maxPolarAngle = Math.PI /2.2
-    controls.enableDamping = true
+function rendeLoop() {
+    labelRenderer.render(scene, camera);
+    TWEEN.update()
+    controls.update()
+    renderer.render(scene, camera)
+    requestAnimationFrame(rendeLoop)
+}
+function load_gltf(path, Ypos, name) {
+    loader.load(path, function (gltf) {
+        scene.add(gltf.scene);
+        gltf.scene.name = name;
+        gltf.scene.position.setY(Ypos);
+    })
+}
+function remove_current_model() {
+    while(scene.children.length > 0){ 
+        scene.remove(scene.children[0]); 
+    }
+}
+function remove_specific_model(name) {
+    for (let i = 0; scene.children.length > 0; i++) {
+        if (scene.children[i].name === name) {
+            scene.remove(scene.children[i])
+            break;
+        }
+    }
 }
 
+function lookAtCurrent3dModel() {
+    switch (current_3d_model) {
+        case 'jasmine_default':
+            remove_specific_model('jasmine_default');
+            break
+        case 'jasmine_1stfloor':
+            remove_specific_model('jasmine_1stfloor');
+            break
+        case 'jasmine_2ndfloor':
+            remove_specific_model('jasmine_2ndfloor');
+            break
+        case 'jasmine_interior':
+            remove_specific_model('jasmine_interior');
+            break
+    }
+}
+
+// Map Page Methods
+function gotoLinnea() {
+    gsap.to(controls.target,{x: -40, y: 2, z: -5, duration: 2, ease: 'power3.inOut'})
+    gsap.to(camera.position,{x: -48, y: 9, z: -21, duration: 2, ease: 'power3.inOut'})
+}
+function gotoJasmine() {
+    gsap.to(controls.target,{x: -15, y: 9, z: -20, duration: 2, ease: 'power3.inOut'})
+    gsap.to(camera.position,{x: -25, y: 9, z: -20, duration: 2, ease: 'power3.inOut'})
+}
+function gotoClubhouse() {
+    gsap.to(controls.target,{x: -15, y: 2, z: -10, duration: 2, ease: 'power3.inOut'})
+    gsap.to(camera.position,{x: -46, y: 6, z: -22, duration: 2, ease: 'power3.inOut'})
+}
 function renderButtons() {
     // linnea btn
     const linnea_p = document.createElement('p');
@@ -185,11 +227,11 @@ function renderButtons() {
     })
 }
 
+// Specific model Page Methods
 function renderBackButton() {
     back_btn.style.display = "block";
     back_btn.addEventListener("click", goBack);
 }
-
 function goBack() {
     back_btn.style.display = "none";
     remove_current_model();
@@ -200,18 +242,38 @@ function goBack() {
     introAnimation();
 }
 
+// Jasmin Model Methods
+function show_jasmine_model() {
+    current_3d_model = 'jasmine_default';
+    jasmine_modal.toggle();
+    remove_current_model();
+    setup_lighting();
+    preloadingPage.style.visibility = 'visible';
+    load_gltf('models/gltf/plane.glb', 8, 'plane')
+    load_gltf('models/gltf/jasmine_default.glb', 8.6, 'jasmine_default')
+    new TWEEN.Tween(camera.position).to({
+        x: 25,
+        y: 12,
+        z: 22
+    }, 5000)
+    .delay(500).easing(TWEEN.Easing.Quartic.InOut).start()
+    .onComplete(function () {
+        renderBackButton()
+        renderButtons_jasmine();
+    })
+}
 function renderButtons_jasmine() {
     // jasmine btn
-    const jasmine_p = document.createElement('p');
-    jasmine_p.className = 'tooltip show';
-    jasmine_p.textContent = 'See Interior'
-    const jasmine_Container = document.createElement('div');
-    jasmine_Container.appendChild(jasmine_p);
-    jasmine_Container.style.cursor = "pointer";
-    const jasmine_PointLabel = new CSS2DObject(jasmine_Container);
-    jasmine_PointLabel.position.set(-3, 15, -2);
-    scene.add(jasmine_PointLabel);
-    jasmine_Container.addEventListener('pointerdown', () => {
+    const interior_p = document.createElement('p');
+    interior_p.className = 'tooltip show';
+    interior_p.textContent = 'See Interior'
+    const interior_container = document.createElement('div');
+    interior_container.appendChild(interior_p);
+    interior_container.style.cursor = "pointer";
+    const interior_Pointlabel = new CSS2DObject(interior_container);
+    interior_Pointlabel.position.set(-3, 15, -2);
+    scene.add(interior_Pointlabel);
+    interior_container.addEventListener('pointerdown', () => {
         gsap.to(camera.position,{x: 0, y: 7, z: -18, duration: 2, ease: 'power3.inOut'})
         // gsap.to(controls.target,{x: 0, y: 0, z: 100 , duration: 2, ease: 'power3.inOut'})
         gsap.to(controls.target,{
@@ -221,8 +283,9 @@ function renderButtons_jasmine() {
             duration: 2,
             ease: 'power3.inOut',
             onComplete() {
-                remove_specific_model('linnea_default');
-                load_gltf('models/gltf/linnea_interior.glb', 8, 'linnea_interior')
+                lookAtCurrent3dModel()
+                current_3d_model = 'jasmine_interior';
+                load_gltf('models/gltf/jasmine_interior.glb', 8, 'jasmine_interior')
             }
         })
     })
@@ -234,7 +297,7 @@ function renderButtons_jasmine() {
     lookAround_Container.appendChild(lookAround_p);
     lookAround_Container.style.cursor = "pointer";
     const lookAround_PointLabel = new CSS2DObject(lookAround_Container);
-    lookAround_PointLabel.position.set(10, 15, 10);
+    lookAround_PointLabel.position.set(5, 10, 4);
     scene.add(lookAround_PointLabel);
     lookAround_Container.addEventListener('pointerdown', () => {
         gsap.to(camera.position,{x: 25, y: 8, z: 22, duration: 5, ease: 'power3.inOut'})
@@ -246,65 +309,40 @@ function renderButtons_jasmine() {
             duration: 2,
             ease: 'power3.inOut',
             onComplete() {
-                remove_specific_model('linnea_interior');
-                load_gltf('models/gltf/linnea_default.glb', 8, 'linnea_default')
+                lookAtCurrent3dModel()
+                current_3d_model = 'jasmine_default';
+                load_gltf('models/gltf/jasmine_default.glb', 8.6, 'jasmine_default')
+            }
+        })
+    })
+
+    const floor_1st_p = document.createElement('p');
+    floor_1st_p.className = 'tooltip show';
+    floor_1st_p.textContent = '1st Floor'
+    const floor_1st_conatiner = document.createElement('div');
+    floor_1st_conatiner.appendChild(floor_1st_p);
+    floor_1st_conatiner.style.cursor = "pointer";
+    const floor_1st_PointLabel = new CSS2DObject(floor_1st_conatiner);
+    floor_1st_PointLabel.position.set(0, 11, 6);
+    scene.add(floor_1st_PointLabel);
+    floor_1st_conatiner.addEventListener('pointerdown', () => {
+        gsap.to(camera.position,{x: 25, y: 8, z: 22, duration: 5, ease: 'power3.inOut'})
+        gsap.to(controls.target,{x: 0, y: 10, z: 0, duration: 2, ease: 'power3.inOut'})
+        gsap.to(controls.target,{
+            x: 0,
+            y: 10,
+            z: 0,
+            duration: 2,
+            ease: 'power3.inOut',
+            onComplete() {
+                lookAtCurrent3dModel()
+                current_3d_model = 'jasmine_1stfloor';
+                load_gltf('models/gltf/jasmine_1stfloor.glb', 8.6, 'jasmine_1stfloor')
             }
         })
     })
 }
 
-function rendeLoop() {
-    // console.log(camera.position)
-    // document.getElementById("cameraPos").innerHTML = camera.position;
-    labelRenderer.render(scene, camera);
-    TWEEN.update() // update animations
-    controls.update() // update orbit controls
-    renderer.render(scene, camera) // render the scene using the camera
-    requestAnimationFrame(rendeLoop) //loop the render function
-}
-function load_gltf(path, Ypos, name) {
-    loader.load(path, function (gltf) {
-        scene.add(gltf.scene);
-        gltf.scene.name = name;
-        gltf.scene.position.setY(Ypos);
-    })
-}
-function remove_current_model() {
-    while(scene.children.length > 0){ 
-        scene.remove(scene.children[0]); 
-    }
-}
-
-function remove_specific_model(name) {
-    // scene.remove(scene.children[index]);
-    for (let i = 0; scene.children.length > 0; i++) {
-        if (scene.children[i].name === name) {
-            scene.remove(scene.children[i])
-            break;
-        }
-    }
-}
-
-function show_jasmine_model() {
-    jasmine_modal.toggle();
-    remove_current_model();
-    setup_lighting();
-    preloadingPage.style.visibility = 'visible';
-    load_gltf('models/gltf/plane.glb', 8, 'plane')
-    load_gltf('models/gltf/jasmine_1stfloor.glb', 8.5, 'linnea_default')
-    new TWEEN.Tween(camera.position).to({
-        x: 25,
-        y: 12,
-        z: 22
-    }, 5000)
-    .delay(500).easing(TWEEN.Easing.Quartic.InOut).start()
-    .onComplete(function () {
-        renderBackButton()
-        renderButtons_jasmine();
-    })
-        
-    
-}
 
 
 import { GUI } from 'three/examples/jsm/libs/dat.gui.module.js'
