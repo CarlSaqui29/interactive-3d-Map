@@ -6,6 +6,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer';
 import { gsap } from "gsap";
+import 'boxicons'
 
 const back_btn = document.querySelector('#back_btn');
 let current_3d_model = "";
@@ -149,7 +150,6 @@ function remove_specific_model(name) {
         }
     }
 }
-
 function lookAtCurrent3dModel() {
     switch (current_3d_model) {
         case 'jasmine_default':
