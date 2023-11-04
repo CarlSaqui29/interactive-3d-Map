@@ -213,18 +213,18 @@ function renderButtons_jasmine() {
     scene.add(jasmine_PointLabel);
     jasmine_Container.addEventListener('pointerdown', () => {
         gsap.to(camera.position,{x: 0, y: 7, z: -18, duration: 2, ease: 'power3.inOut'})
-        gsap.to(controls.target,{x: 0, y: 0, z: 100 , duration: 2, ease: 'power3.inOut'})
-        // gsap.to(controls.target,{
-        //     x: 0,
-        //     y: 0,
-        //     z: 100,
-        //     duration: 2,
-        //     ease: 'power3.inOut',
-        //     onComplete() {
-        //         // controls.enabled = false;
-        //         // controls.maxTargetRadius =.5
-        //     }
-        // })
+        // gsap.to(controls.target,{x: 0, y: 0, z: 100 , duration: 2, ease: 'power3.inOut'})
+        gsap.to(controls.target,{
+            x: 0,
+            y: 0,
+            z: 100,
+            duration: 2,
+            ease: 'power3.inOut',
+            onComplete() {
+                remove_specific_model('linnea_default');
+                load_gltf('models/gltf/linnea_interior.glb', 8, 'linnea_interior')
+            }
+        })
     })
 
     const lookAround_p = document.createElement('p');
@@ -237,14 +237,24 @@ function renderButtons_jasmine() {
     lookAround_PointLabel.position.set(10, 15, 10);
     scene.add(lookAround_PointLabel);
     lookAround_Container.addEventListener('pointerdown', () => {
-        gsap.to(camera.position,{x: 25, y: 12, z: 22, duration: 5, ease: 'power3.inOut'})
+        gsap.to(camera.position,{x: 25, y: 8, z: 22, duration: 5, ease: 'power3.inOut'})
         gsap.to(controls.target,{x: 0, y: 10, z: 0, duration: 2, ease: 'power3.inOut'})
-        controls.enabled = true;
+        gsap.to(controls.target,{
+            x: 0,
+            y: 10,
+            z: 0,
+            duration: 2,
+            ease: 'power3.inOut',
+            onComplete() {
+                remove_specific_model('linnea_interior');
+                load_gltf('models/gltf/linnea_default.glb', 8, 'linnea_default')
+            }
+        })
     })
 }
 
 function rendeLoop() {
-    console.log(camera.position)
+    // console.log(camera.position)
     // document.getElementById("cameraPos").innerHTML = camera.position;
     labelRenderer.render(scene, camera);
     TWEEN.update() // update animations
@@ -252,9 +262,10 @@ function rendeLoop() {
     renderer.render(scene, camera) // render the scene using the camera
     requestAnimationFrame(rendeLoop) //loop the render function
 }
-function load_gltf(path, Ypos) {
+function load_gltf(path, Ypos, name) {
     loader.load(path, function (gltf) {
         scene.add(gltf.scene);
+        gltf.scene.name = name;
         gltf.scene.position.setY(Ypos);
     })
 }
@@ -264,12 +275,23 @@ function remove_current_model() {
     }
 }
 
+function remove_specific_model(name) {
+    // scene.remove(scene.children[index]);
+    for (let i = 0; scene.children.length > 0; i++) {
+        if (scene.children[i].name === name) {
+            scene.remove(scene.children[i])
+            break;
+        }
+    }
+}
+
 function show_jasmine_model() {
     jasmine_modal.toggle();
     remove_current_model();
     setup_lighting();
     preloadingPage.style.visibility = 'visible';
-    load_gltf('models/gltf/jasmine_interior.glb', 8)
+    load_gltf('models/gltf/plane.glb', 8, 'plane')
+    load_gltf('models/gltf/jasmine_1stfloor.glb', 8.5, 'linnea_default')
     new TWEEN.Tween(camera.position).to({
         x: 25,
         y: 12,
@@ -287,3 +309,5 @@ function show_jasmine_model() {
 
 import { GUI } from 'three/examples/jsm/libs/dat.gui.module.js'
 const gui = new GUI()
+
+// load_gltf('models/gltf/linnea_2ndfloor.glb', 8.5, 'linnea_default')
