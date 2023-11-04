@@ -233,6 +233,7 @@ function renderBackButton() {
     back_btn.addEventListener("click", goBack);
 }
 function goBack() {
+    current_3d_model = '';
     back_btn.style.display = "none";
     remove_current_model();
     setup_lighting();
@@ -335,6 +336,31 @@ function renderButtons_jasmine() {
                 lookAtCurrent3dModel()
                 current_3d_model = 'jasmine_1stfloor';
                 load_gltf('models/gltf/jasmine_1stfloor.glb', 8.6, 'jasmine_1stfloor')
+            }
+        })
+    })
+
+    const floor_2nd_p = document.createElement('p');
+    floor_2nd_p.className = 'tooltip show';
+    floor_2nd_p.textContent = '2nd Floor'
+    const floor_2nd_conatiner = document.createElement('div');
+    floor_2nd_conatiner.appendChild(floor_2nd_p);
+    floor_2nd_conatiner.style.cursor = "pointer";
+    const floor_2nd_PointLabel = new CSS2DObject(floor_2nd_conatiner);
+    floor_2nd_PointLabel.position.set(0, 15, 6);
+    scene.add(floor_2nd_PointLabel);
+    floor_2nd_conatiner.addEventListener('pointerdown', () => {
+        gsap.to(camera.position,{x: 0, y: 30, z: 0, duration: 5, ease: 'power3.inOut'})
+        gsap.to(controls.target,{
+            x: 0,
+            y: 10,
+            z: 2,
+            duration: 2,
+            ease: 'power3.inOut',
+            onComplete() {
+                lookAtCurrent3dModel()
+                current_3d_model = 'jasmine_2ndfloor';
+                load_gltf('models/gltf/jasmine_2ndfloor.glb', 8.6, 'jasmine_2ndfloor')
             }
         })
     })
