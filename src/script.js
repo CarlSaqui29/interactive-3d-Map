@@ -266,15 +266,27 @@ function show_jasmine_model() {
     preloadingPage.style.visibility = 'visible';
     load_gltf('models/gltf/plane.glb', 8, 'plane')
     load_gltf('models/gltf/jasmine_default.glb', 8.6, 'jasmine_default')
-    new TWEEN.Tween(camera.position).to({
-        x: 25,
-        y: 12,
-        z: 22
-    }, 5000)
-    .delay(500).easing(TWEEN.Easing.Quartic.InOut).start()
-    .onComplete(function () {
-        renderBackButton()
+    // new TWEEN.Tween(camera.position).to({
+    //     x: 25,
+    //     y: 12,
+    //     z: 22
+    // }, 5000)
+    // .delay(500).easing(TWEEN.Easing.Quartic.InOut).start()
+    // .onComplete(function () {
+    //     renderBackButton()
+    //     renderButtons_jasmine();
+    // })
+    gsap.to(camera.position,{x: 25, y: 8, z: 22, duration: 5, ease: 'power3.inOut'})
+    gsap.to(controls.target,{
+        x: 0,
+        y: 10,
+        z: 0,
+        duration: 2,
+        ease: 'power3.inOut',
+        onComplete() {
+            renderBackButton()
         renderButtons_jasmine();
+        }
     })
 }
 function renderButtons_jasmine() {
@@ -389,15 +401,27 @@ function show_linnea_model() {
     preloadingPage.style.visibility = 'visible';
     load_gltf('models/gltf/plane.glb', 8, 'plane')
     load_gltf('models/gltf/linnea_default.glb', 8, 'linnea_default')
-    new TWEEN.Tween(camera.position).to({
-        x: 25,
-        y: 12,
-        z: 22
-    }, 5000)
-    .delay(500).easing(TWEEN.Easing.Quartic.InOut).start()
-    .onComplete(function () {
-        renderBackButton()
-        renderButtons_linnea();
+    // new TWEEN.Tween(camera.position).to({
+    //     x: 25,
+    //     y: 12,
+    //     z: 22
+    // }, 5000)
+    // .delay(500).easing(TWEEN.Easing.Quartic.InOut).start()
+    // .onComplete(function () {
+    //     renderBackButton()
+    //     renderButtons_linnea();
+    // })
+    gsap.to(camera.position,{x: 25, y: 8, z: 22, duration: 5, ease: 'power3.inOut'})
+    gsap.to(controls.target,{
+        x: 0,
+        y: 10,
+        z: 0,
+        duration: 2,
+        ease: 'power3.inOut',
+        onComplete() {
+            renderBackButton()
+            renderButtons_linnea();
+        }
     })
 }
 function renderButtons_linnea() {
