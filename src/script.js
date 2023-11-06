@@ -476,30 +476,30 @@ function renderButtons_linnea() {
         })
     })
 
-    // const floor_1st_p = document.createElement('p');
-    // floor_1st_p.className = 'tooltip show';
-    // floor_1st_p.textContent = '1st Floor'
-    // const floor_1st_conatiner = document.createElement('div');
-    // floor_1st_conatiner.appendChild(floor_1st_p);
-    // floor_1st_conatiner.style.cursor = "pointer";
-    // const floor_1st_PointLabel = new CSS2DObject(floor_1st_conatiner);
-    // floor_1st_PointLabel.position.set(0, 11, 6);
-    // scene.add(floor_1st_PointLabel);
-    // floor_1st_conatiner.addEventListener('pointerdown', () => {
-    //     gsap.to(camera.position,{x: 0, y: 30, z: 0, duration: 5, ease: 'power3.inOut'})
-    //     gsap.to(controls.target,{
-    //         x: 0,
-    //         y: 10,
-    //         z: 2,
-    //         duration: 2,
-    //         ease: 'power3.inOut',
-    //         onComplete() {
-    //             lookAtCurrent3dModel()
-    //             current_3d_model = 'jasmine_1stfloor';
-    //             load_gltf('models/gltf/jasmine_1stfloor.glb', 8.6, 'jasmine_1stfloor')
-    //         }
-    //     })
-    // })
+    const floor_1st_p = document.createElement('p');
+    floor_1st_p.className = 'tooltip show';
+    floor_1st_p.textContent = '1st Floor'
+    const floor_1st_conatiner = document.createElement('div');
+    floor_1st_conatiner.appendChild(floor_1st_p);
+    floor_1st_conatiner.style.cursor = "pointer";
+    const floor_1st_PointLabel = new CSS2DObject(floor_1st_conatiner);
+    floor_1st_PointLabel.position.set(0, 11, 6);
+    scene.add(floor_1st_PointLabel);
+    floor_1st_conatiner.addEventListener('pointerdown', () => {
+        gsap.to(camera.position,{x: 0, y: 30, z: 0, duration: 5, ease: 'power3.inOut'})
+        gsap.to(controls.target,{
+            x: 0,
+            y: 10,
+            z: 2,
+            duration: 2,
+            ease: 'power3.inOut',
+            onComplete() {
+                lookAtCurrent3dModel()
+                current_3d_model = 'linnea_1stfloor';
+                load_gltf('models/gltf/linnea_1stfloor.glb', 8.5, 'linnea_1stfloor')
+            }
+        })
+    })
 
     const floor_2nd_p = document.createElement('p');
     floor_2nd_p.className = 'tooltip show';
@@ -521,7 +521,7 @@ function renderButtons_linnea() {
             onComplete() {
                 lookAtCurrent3dModel()
                 current_3d_model = 'linnea_2ndfloor';
-                load_gltf('models/gltf/linnea_2ndfloor.glb', 8.6, 'linnea_2ndfloor')
+                load_gltf('models/gltf/linnea_2ndfloor.glb', 8.5, 'linnea_2ndfloor')
             }
         })
     })
