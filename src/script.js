@@ -8,11 +8,8 @@ import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRe
 import { gsap } from "gsap";
 import 'boxicons'
 
-// let audio = new Audio('../static/ambience.mp3')
-// audio.play();
-// audio.loop = true;;
-
-
+let sound = document.getElementById('audio');
+sound.pause();
 
 
 const back_btn = document.querySelector('#back_btn');
@@ -98,6 +95,9 @@ setOrbitControlsLimits(1, 150, true, true);
 rendeLoop();
 
 // Global Methods
+function playsound() {
+    sound.play(); 
+}
 function setup_lighting() {
     const ambient = new THREE.AmbientLight(0xa0a0fc, 0.82)
     scene.add(ambient)
@@ -129,6 +129,7 @@ function introAnimation() {
         //setOrbitControlsLimits() //enable controls limits
         TWEEN.remove(this) // remove the animation from memory
         renderButtons();
+        playsound()
     })
     
 }
@@ -533,19 +534,3 @@ function renderButtons_linnea() {
         })
     })
 }
-
-// create an AudioListener and add it to the camera
-const listener = new THREE.AudioListener();
-camera.add( listener );
-
-// create a global audio source
-const sound = new THREE.Audio( listener );
-
-// load a sound and set it as the Audio object's buffer
-const audioLoader = new THREE.AudioLoader();
-audioLoader.load( '../static/images/ambience.ogg', function( buffer ) {
-	sound.setBuffer( buffer );
-	sound.setLoop( true );
-	sound.setVolume( 0.5 );
-	sound.play();
-});
