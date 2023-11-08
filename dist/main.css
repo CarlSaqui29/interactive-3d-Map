@@ -52,3 +52,7 @@ body, html {
 	background-color: #fff;
 	fill: #000;
 }
+
+.info img {
+	width: 100%;
+}
