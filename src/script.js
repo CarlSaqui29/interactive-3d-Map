@@ -543,7 +543,7 @@ const sound = new THREE.Audio( listener );
 
 // load a sound and set it as the Audio object's buffer
 const audioLoader = new THREE.AudioLoader();
-audioLoader.load( '../static/ambience.ogg', function( buffer ) {
+audioLoader.load( '../static/images/ambience.ogg', function( buffer ) {
 	sound.setBuffer( buffer );
 	sound.setLoop( true );
 	sound.setVolume( 0.5 );
