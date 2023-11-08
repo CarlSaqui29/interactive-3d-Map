@@ -526,10 +526,3 @@ function renderButtons_linnea() {
         })
     })
 }
-
-
-
-import { GUI } from 'three/examples/jsm/libs/dat.gui.module.js'
-const gui = new GUI()
-
-// load_gltf('models/gltf/linnea_2ndfloor.glb', 8.5, 'linnea_default')
